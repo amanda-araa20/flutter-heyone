@@ -2,9 +2,16 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 
 class ApiService {
-  static const String baseUrl = "http://127.0.0.1:9000/api";
+  static String get baseUrl {
+    if (kIsWeb) {
+      return "http://127.0.0.1:9000/api";
+    } else {
+      return "http://10.0.2.2:9000/api";
+    }
+  }
 
   // ==============================
   // AUTHENTICATED GET REQUEST
