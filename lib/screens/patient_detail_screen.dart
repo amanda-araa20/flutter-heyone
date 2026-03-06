@@ -109,6 +109,9 @@ class _PatientDetailScreenState extends State<PatientDetailScreen> {
           TextField(
             controller: controller,
             keyboardType: keyboardType,
+            minLines: 3,
+            maxLines: null,
+            textInputAction: TextInputAction.newline,
             decoration: InputDecoration(
               isDense: true,
               border: InputBorder.none,
