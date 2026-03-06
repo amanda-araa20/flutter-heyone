@@ -77,6 +77,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen> {
     required String label,
     required TextEditingController controller,
     TextInputType keyboardType = TextInputType.text,
+    bool isMultiline = false,
     Widget? prefix,
     String? helperText,
   }) {
@@ -108,10 +109,11 @@ class _PatientDetailScreenState extends State<PatientDetailScreen> {
           const SizedBox(height: 6),
           TextField(
             controller: controller,
-            keyboardType: keyboardType,
-            minLines: 3,
-            maxLines: null,
-            textInputAction: TextInputAction.newline,
+            keyboardType: isMultiline ? TextInputType.multiline : keyboardType,
+            textInputAction:
+                isMultiline ? TextInputAction.newline : TextInputAction.done,
+            minLines: isMultiline ? 3 : 1,
+            maxLines: isMultiline ? null : 1,
             decoration: InputDecoration(
               isDense: true,
               border: InputBorder.none,
@@ -248,8 +250,11 @@ class _PatientDetailScreenState extends State<PatientDetailScreen> {
 
             const SizedBox(height: 20),
 
-            buildInputCard(label: "Tindakan", controller: tindakanController),
-
+            buildInputCard(
+              label: "Tindakan",
+              controller: tindakanController,
+              isMultiline: true,
+            ),
             buildInputCard(
               label: "Harga",
               controller: hargaController,
