@@ -113,7 +113,8 @@ class _PatientDetailScreenState extends State<PatientDetailScreen> {
             textInputAction:
                 isMultiline ? TextInputAction.newline : TextInputAction.done,
             minLines: isMultiline ? 3 : 1,
-            maxLines: isMultiline ? null : 1,
+            maxLines: isMultiline ? 5 : 1,
+            expands: false,
             decoration: InputDecoration(
               isDense: true,
               border: InputBorder.none,
