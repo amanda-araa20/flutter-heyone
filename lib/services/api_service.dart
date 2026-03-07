@@ -31,15 +31,11 @@ class ApiService {
   }
 
   // ==============================
-  // GET TRANSAKSI BOOKED HARI INI
+  // GET KLINIK DOKTER
   // ==============================
-  static Future<List<dynamic>> getTodayBookedTransactions() async {
-    final today = DateTime.now().toIso8601String().split('T').first;
-
+  static Future<List<dynamic>> getMyClinics() async {
     final response = await http.get(
-      Uri.parse(
-        "$baseUrl/mobile/medical-transactions?status=BOOKED&date=$today",
-      ),
+      Uri.parse("$baseUrl/mobile/my-clinics"),
       headers: await authHeader(),
     );
 
@@ -47,6 +43,40 @@ class ApiService {
       await clearToken();
       throw Exception("Session expired. Silakan login kembali.");
     }
+
+    if (response.statusCode == 200) {
+      final decoded = jsonDecode(response.body);
+      return decoded['data'] ?? [];
+    } else {
+      throw Exception("Failed to load clinics: ${response.body}");
+    }
+  }
+
+  // ==============================
+  // GET TRANSAKSI BOOKED HARI INI
+  // ==============================
+  static Future<List<dynamic>> getTodayBookedTransactions([
+    int? clinicId,
+  ]) async {
+    final today = DateTime.now().toIso8601String().split('T').first;
+
+    String url =
+        "$baseUrl/mobile/medical-transactions?status=BOOKED&date=$today";
+
+    if (clinicId != null) {
+      url += "&clinic_id=$clinicId";
+    }
+
+    final response = await http.get(
+      Uri.parse(url),
+      headers: await authHeader(),
+    );
+
+    if (response.statusCode == 401) {
+      await clearToken();
+      throw Exception("Session expired. Silakan login kembali.");
+    }
+
     if (response.statusCode == 200) {
       final decoded = jsonDecode(response.body);
       return decoded['data'] ?? [];

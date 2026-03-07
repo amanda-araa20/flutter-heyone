@@ -11,14 +11,17 @@ class PatientListScreen extends StatefulWidget {
 }
 
 class _PatientListScreenState extends State<PatientListScreen> {
-  late Future<List<dynamic>> patients;
+  Future<List<dynamic>>? patients;
   Map<String, dynamic>? doctor;
+
+  List<dynamic> clinics = [];
+  int? selectedClinicId;
 
   @override
   void initState() {
     super.initState();
-    patients = ApiService.getTodayBookedTransactions();
     loadDoctor();
+    loadClinics();
   }
 
   void loadDoctor() async {
@@ -30,6 +33,29 @@ class _PatientListScreenState extends State<PatientListScreen> {
     } catch (e) {
       print(e);
     }
+  }
+
+  void loadClinics() async {
+    try {
+      final data = await ApiService.getMyClinics();
+
+      setState(() {
+        clinics = data;
+
+        if (clinics.isNotEmpty) {
+          selectedClinicId = clinics.first['id'];
+          patients = ApiService.getTodayBookedTransactions(selectedClinicId);
+        }
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void reloadPatients() {
+    setState(() {
+      patients = ApiService.getTodayBookedTransactions(selectedClinicId);
+    });
   }
 
   @override
@@ -157,135 +183,183 @@ class _PatientListScreenState extends State<PatientListScreen> {
             ),
         ],
       ),
-      body: FutureBuilder<List<dynamic>>(
-        future: patients,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            final data = snapshot.data!;
+      body: Column(
+        children: [
+          /// DROPDOWN PILIH KLINIK
+          if (clinics.isNotEmpty)
+            Container(
+              padding: const EdgeInsets.all(16),
+              color: Colors.white,
+              child: Row(
+                children: [
+                  const Text(
+                    "Pilih Klinik: ",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: DropdownButton<int>(
+                      value: selectedClinicId,
+                      isExpanded: true,
+                      items:
+                          clinics.map((clinic) {
+                            return DropdownMenuItem<int>(
+                              value: clinic['id'],
+                              child: Text(clinic['name']),
+                            );
+                          }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedClinicId = value;
+                        });
 
-            return Column(
-              children: [
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16),
-                  color: Colors.white,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                        reloadPatients();
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+          Expanded(
+            child: FutureBuilder<List<dynamic>>(
+              future: patients ?? Future.value([]),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  final data = snapshot.data!;
+
+                  return Column(
                     children: [
-                      const Text(
-                        "STATUS: MENUNGGU",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        color: Colors.white,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "STATUS: MENUNGGU",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                            ),
+                            Text(
+                              "Tanggal: $todayFormatted",
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      Text(
-                        "Tanggal: $todayFormatted",
-                        style: const TextStyle(fontWeight: FontWeight.w600),
-                      ),
-                    ],
-                  ),
-                ),
 
-                Expanded(
-                  child:
-                      data.isEmpty
-                          ? const Center(
-                            child: Text(
-                              "Tidak ada pasien hari ini",
-                              style: TextStyle(fontWeight: FontWeight.w600),
-                            ),
-                          )
-                          : ListView.builder(
-                            padding: const EdgeInsets.all(16),
-                            itemCount: data.length,
-                            itemBuilder: (context, index) {
-                              final item = data[index];
+                      Expanded(
+                        child:
+                            data.isEmpty
+                                ? const Center(
+                                  child: Text(
+                                    "Tidak ada pasien hari ini",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                )
+                                : ListView.builder(
+                                  padding: const EdgeInsets.all(16),
+                                  itemCount: data.length,
+                                  itemBuilder: (context, index) {
+                                    final item = data[index];
 
-                              final petName = item['pet']?['name'] ?? '-';
-                              final ownerName =
-                                  item['pet']?['owner']?['name'] ??
-                                  'Pemilik tidak ada';
-                              final complaint = item['complaint'] ?? '-';
+                                    final petName = item['pet']?['name'] ?? '-';
+                                    final ownerName =
+                                        item['pet']?['owner']?['name'] ??
+                                        'Pemilik tidak ada';
+                                    final complaint = item['complaint'] ?? '-';
 
-                              return Card(
-                                elevation: 3,
-                                margin: const EdgeInsets.only(bottom: 16),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: ListTile(
-                                  contentPadding: const EdgeInsets.all(16),
-                                  onTap: () async {
-                                    await Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder:
-                                            (_) => PatientDetailScreen(
-                                              transaction: item,
+                                    return Card(
+                                      elevation: 3,
+                                      margin: const EdgeInsets.only(bottom: 16),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                      child: ListTile(
+                                        contentPadding: const EdgeInsets.all(
+                                          16,
+                                        ),
+                                        onTap: () async {
+                                          await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder:
+                                                  (_) => PatientDetailScreen(
+                                                    transaction: item,
+                                                  ),
                                             ),
+                                          );
+
+                                          reloadPatients();
+                                        },
+                                        leading: const Icon(
+                                          Icons.pets,
+                                          color: Color(0xFF7E57C2),
+                                          size: 28,
+                                        ),
+                                        title: Text(
+                                          petName,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                        subtitle: Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 6,
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "Pemilik: $ownerName",
+                                                style: const TextStyle(
+                                                  fontSize: 13,
+                                                  color: Colors.grey,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 4),
+                                              Text(
+                                                "Keluhan: $complaint",
+                                                style: const TextStyle(
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        trailing: const Icon(
+                                          Icons.arrow_forward_ios,
+                                          size: 16,
+                                        ),
                                       ),
                                     );
-                                    setState(() {
-                                      patients =
-                                          ApiService.getTodayBookedTransactions();
-                                    });
                                   },
-                                  leading: const Icon(
-                                    Icons.pets,
-                                    color: Color(0xFF7E57C2),
-                                    size: 28,
-                                  ),
-                                  title: Text(
-                                    petName,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                  subtitle: Padding(
-                                    padding: const EdgeInsets.only(top: 6),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          "Pemilik: $ownerName",
-                                          style: const TextStyle(
-                                            fontSize: 13,
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          "Keluhan: $complaint",
-                                          style: const TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  trailing: const Icon(
-                                    Icons.arrow_forward_ios,
-                                    size: 16,
-                                  ),
                                 ),
-                              );
-                            },
-                          ),
-                ),
-              ],
-            );
-          }
+                      ),
+                    ],
+                  );
+                }
 
-          if (snapshot.hasError) {
-            return Center(child: Text(snapshot.error.toString()));
-          }
+                if (snapshot.hasError) {
+                  return Center(child: Text(snapshot.error.toString()));
+                }
 
-          return const Center(child: CircularProgressIndicator());
-        },
+                return const Center(child: CircularProgressIndicator());
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
