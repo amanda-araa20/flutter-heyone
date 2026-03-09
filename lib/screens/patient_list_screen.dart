@@ -276,6 +276,7 @@ class _PatientListScreenState extends State<PatientListScreen> {
                                         item['pet']?['owner']?['name'] ??
                                         'Pemilik tidak ada';
                                     final complaint = item['complaint'] ?? '-';
+                                    final queue = item['queue_number'] ?? '-';
 
                                     return Card(
                                       elevation: 3,
@@ -300,10 +301,24 @@ class _PatientListScreenState extends State<PatientListScreen> {
 
                                           reloadPatients();
                                         },
-                                        leading: const Icon(
-                                          Icons.pets,
-                                          color: Color(0xFF7E57C2),
-                                          size: 28,
+                                        leading: Container(
+                                          width: 50,
+                                          height: 50,
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFF7E57C2),
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
+                                          ),
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            queue,
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 14,
+                                            ),
+                                          ),
                                         ),
                                         title: Text(
                                           petName,

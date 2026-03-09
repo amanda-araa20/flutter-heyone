@@ -184,6 +184,89 @@ class _PatientDetailScreenState extends State<PatientDetailScreen> {
     }
   }
 
+  void _showMedicalHistory() async {
+    final petId = widget.transaction['pet']['id'];
+
+    try {
+      final history = await ApiService.getMedicalHistory(petId);
+
+      showDialog(
+        context: context,
+        builder: (_) {
+          return AlertDialog(
+            title: const Text("Rekam Medik"),
+            content: SizedBox(
+              width: double.maxFinite,
+              child:
+                  history.isEmpty
+                      ? const Text("Belum pernah berobat")
+                      : ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: history.length,
+                        itemBuilder: (context, index) {
+                          final item = history[index];
+
+                          return Card(
+                            elevation: 2,
+                            margin: const EdgeInsets.only(bottom: 10),
+                            child: Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    DateFormat(
+                                      'dd MMM yyyy',
+                                    ).format(DateTime.parse(item['date'])),
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.deepPurple,
+                                    ),
+                                  ),
+
+                                  const SizedBox(height: 6),
+
+                                  Text("Keluhan: ${item['complaint'] ?? '-'}"),
+
+                                  const SizedBox(height: 4),
+
+                                  Text("Tindakan: ${item['treatment'] ?? '-'}"),
+
+                                  const SizedBox(height: 4),
+
+                                  Text("Dokter: ${item['doctor'] ?? '-'}"),
+
+                                  const SizedBox(height: 4),
+
+                                  Text(
+                                    "Biaya: Rp ${item['price']}",
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("Tutup"),
+              ),
+            ],
+          );
+        },
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error: $e")));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final transaction = widget.transaction;
@@ -241,6 +324,19 @@ class _PatientDetailScreenState extends State<PatientDetailScreen> {
             ),
 
             const SizedBox(height: 20),
+
+            Align(
+              alignment: Alignment.centerRight,
+              child: ElevatedButton.icon(
+                icon: const Icon(Icons.history),
+                label: const Text("Rekam Medik"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepPurple,
+                  foregroundColor: Colors.white,
+                ),
+                onPressed: () => _showMedicalHistory(),
+              ),
+            ),
 
             buildInfoCard("Nama Hewan", petName),
             buildInfoCard("Pemilik", ownerName),

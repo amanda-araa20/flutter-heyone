@@ -95,10 +95,7 @@ class ApiService {
   ) async {
     final response = await http.put(
       Uri.parse("$baseUrl/mobile/medical-transactions/$id"),
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-      },
+      headers: await authHeader(),
       body: jsonEncode({
         "treatment": tindakan,
         "price":
@@ -255,5 +252,28 @@ class ApiService {
     if (response.statusCode != 200) {
       throw Exception("Gagal update profile");
     }
+  }
+
+  // ==============================
+  // REKAM MEDIK FLUTTER
+  // ==============================
+
+  static Future<List<dynamic>> getMedicalHistory(int petId) async {
+    final response = await http.get(
+      Uri.parse("$baseUrl/mobile/pets/$petId/medical-history"),
+      headers: await authHeader(),
+    );
+
+    if (response.statusCode == 401) {
+      await clearToken();
+      throw Exception("Session expired");
+    }
+
+    if (response.statusCode == 200) {
+      final decoded = jsonDecode(response.body);
+      return decoded['data'] ?? [];
+    }
+
+    throw Exception("Failed to load medical history");
   }
 }
