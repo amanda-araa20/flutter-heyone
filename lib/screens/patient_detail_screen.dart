@@ -139,11 +139,17 @@ class _PatientDetailScreenState extends State<PatientDetailScreen> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context, false),
-                child: const Text("Batal"),
+                child: const Text(
+                  "Batal",
+                  style: TextStyle(color: Colors.black),
+                ),
               ),
-              ElevatedButton(
+              TextButton(
                 onPressed: () => Navigator.pop(context, true),
-                child: const Text("Ya, Simpan"),
+                child: const Text(
+                  "Ya, Simpan",
+                  style: TextStyle(color: Colors.black),
+                ),
               ),
             ],
           ),
@@ -220,7 +226,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen> {
                                     ).format(DateTime.parse(item['date'])),
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.deepPurple,
+                                      color: Colors.black,
                                     ),
                                   ),
 
@@ -254,7 +260,13 @@ class _PatientDetailScreenState extends State<PatientDetailScreen> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text("Tutup"),
+                child: const Text(
+                  "Tutup",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ],
           );
@@ -286,7 +298,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6FA),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF7E57C2),
+        backgroundColor: const Color(0xFF00BBD4),
         title: const Text(
           "Detail Pasien",
           style: TextStyle(color: Colors.white),
@@ -301,7 +313,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFF7E57C2),
+                color: const Color(0xFF00BBD4),
                 borderRadius: BorderRadius.circular(14),
               ),
               child: Column(
@@ -331,7 +343,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen> {
                 icon: const Icon(Icons.history),
                 label: const Text("Rekam Medik"),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurple,
+                  backgroundColor: Color(0xFF00BBD4),
                   foregroundColor: Colors.white,
                 ),
                 onPressed: () => _showMedicalHistory(),

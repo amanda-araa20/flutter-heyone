@@ -86,7 +86,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF6A5ACD), Color(0xFF8A6BEA)],
+            colors: [Color(0xFF00C6D7), Color(0xFF0097A7)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -135,7 +135,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   const Text(
                     "Informasi Dokter",
                     style: TextStyle(
-                      color: Color(0xFF7E57C2),
+                      color: Color(0xFF00BBD4),
                       fontWeight: FontWeight.bold,
                     ),
                   ),

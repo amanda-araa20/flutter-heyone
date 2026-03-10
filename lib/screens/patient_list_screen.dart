@@ -65,7 +65,7 @@ class _PatientListScreenState extends State<PatientListScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F6FA),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF7E57C2),
+        backgroundColor: const Color(0xFF00BBD4),
         title: const Text(
           "Cari Pasien",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
@@ -305,7 +305,7 @@ class _PatientListScreenState extends State<PatientListScreen> {
                                           width: 50,
                                           height: 50,
                                           decoration: BoxDecoration(
-                                            color: const Color(0xFF7E57C2),
+                                            color: const Color(0xFF00BBD4),
                                             borderRadius: BorderRadius.circular(
                                               12,
                                             ),
