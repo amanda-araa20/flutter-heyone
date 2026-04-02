@@ -35,7 +35,7 @@ class ApiService {
   // ==============================
   static Future<List<dynamic>> getMyClinics() async {
     final response = await http.get(
-      Uri.parse("$baseUrl/mobile/my-clinics"),
+      Uri.parse("$baseUrl/doctor/my-clinics"),
       headers: await authHeader(),
     );
 
@@ -61,7 +61,7 @@ class ApiService {
     final today = DateTime.now().toIso8601String().split('T').first;
 
     String url =
-        "$baseUrl/mobile/medical-transactions?status=BOOKED&date=$today";
+        "$baseUrl/doctor/medical-transactions?status=BOOKED&date=$today";
 
     if (clinicId != null) {
       url += "&clinic_id=$clinicId";
@@ -94,7 +94,7 @@ class ApiService {
     String harga,
   ) async {
     final response = await http.put(
-      Uri.parse("$baseUrl/mobile/medical-transactions/$id"),
+      Uri.parse("$baseUrl/doctor/medical-transactions/$id"),
       headers: await authHeader(),
       body: jsonEncode({
         "treatment": tindakan,
@@ -275,5 +275,21 @@ class ApiService {
     }
 
     throw Exception("Failed to load medical history");
+  }
+
+  // ==============================
+  // GET DOCTOR RATING SUMMARY
+  // ==============================
+  static Future<Map<String, dynamic>> getDoctorRatingSummary(
+    int doctorId,
+  ) async {
+    final response = await authGet("/doctor/$doctorId/rating-summary");
+
+    if (response.statusCode == 200) {
+      final decoded = jsonDecode(response.body);
+      return decoded['data'];
+    } else {
+      throw Exception("Failed to load rating summary");
+    }
   }
 }

@@ -4,6 +4,7 @@ import '../services/api_service.dart';
 import 'patient_detail_screen.dart';
 import 'login_screen.dart';
 import 'edit_profile_screen.dart';
+import 'doctor_rating_screen.dart';
 
 class PatientListScreen extends StatefulWidget {
   @override
@@ -146,6 +147,16 @@ class _PatientListScreenState extends State<PatientListScreen> {
                       ),
                     ),
                     const PopupMenuItem(
+                      value: "rating",
+                      child: Text(
+                        "Rating Saya",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ),
+                    const PopupMenuItem(
                       value: "logout",
                       child: Text(
                         "Logout",
@@ -168,6 +179,14 @@ class _PatientListScreenState extends State<PatientListScreen> {
                       loadDoctor();
                     }
                   });
+                }
+                if (value == "rating") {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => DoctorRatingScreen(doctor: doctor!),
+                    ),
+                  );
                 }
 
                 if (value == "logout") {
