@@ -260,7 +260,7 @@ class ApiService {
 
   static Future<List<dynamic>> getMedicalHistory(int petId) async {
     final response = await http.get(
-      Uri.parse("$baseUrl/mobile/pets/$petId/medical-history"),
+      Uri.parse("$baseUrl/doctor/pets/$petId/medical-history"),
       headers: await authHeader(),
     );
 
