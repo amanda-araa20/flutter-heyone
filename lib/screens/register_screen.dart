@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
+import 'package:flutter/material.dart';
+import '../services/api_service.dart';
 
 class RegisterScreen extends StatefulWidget {
   @override
@@ -142,11 +144,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                   const SizedBox(height: 16),
 
-                  input("Nama Dokter", nameController),
+                  input("Nama Dokter (cth: drh. Santi Nugraha)", nameController),
                   input("Username", usernameController),
                   input("Email", emailController),
 
-                  input("Password", passwordController, obscure: true),
+                  input("Password (min. 6 karakter)", passwordController, obscure: true),
 
                   input(
                     "Konfirmasi Password",
@@ -154,9 +156,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     obscure: true,
                   ),
 
-                  input("Contact", contactController),
+                  input("Nomor WhatsApp", contactController),
 
-                  input("Specialization", specializationController),
+                  input("Spesialisasi (cth: Umum, Radiologi)", specializationController),
 
                   const SizedBox(height: 10),
 

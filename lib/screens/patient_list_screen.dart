@@ -321,8 +321,8 @@ class _PatientListScreenState extends State<PatientListScreen> {
                                           reloadPatients();
                                         },
                                         leading: Container(
-                                          width: 50,
-                                          height: 50,
+                                          width: 56,
+                                          height: 56,
                                           decoration: BoxDecoration(
                                             color: const Color(0xFF00BBD4),
                                             borderRadius: BorderRadius.circular(
